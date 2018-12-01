@@ -13,4 +13,9 @@ public class DMS
 		this.locationY = locationY;
 		DMSDatabase = new ArrayList<UserEquipment>();
 	}
+	
+	public DMS()
+	{
+		
+	}
 }

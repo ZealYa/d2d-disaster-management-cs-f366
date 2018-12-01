@@ -57,10 +57,60 @@ public class Driver
 		}
 	}
 	
+	public void transferInfoDMS(DMS d1, DMS d2)
+	{																
+		d2.DMSDatabase.addAll(d1.DMSDatabase);
+	}
+	
+	public ArrayList<DMS> sendDMSSOS(DMS d1)
+	{
+		ArrayList<Integer> dmsIDList = new ArrayList<Integer>();
+		ArrayList<DMS> dmsHelpers = new ArrayList<DMS>();
 		
+		double nearest = 0.0;
+		for(int i=0;i<2;i++)
+		{
+			DMS d3 = new DMS();
+			nearest = 1000.0;
+			for(DMS d2 : DMSList)
+			{
+				if(d2.DMSId!=d1.DMSId && !dmsIDList.contains(d2.DMSId))
+				{
+					double dist = Math.sqrt((d1.locationX-d2.locationX)*(d1.locationX-d2.locationX)
+									+ (d1.locationY-d2.locationY)*(d1.locationX-d2.locationY));
+					if(dist<=nearest)
+					{
+						nearest = dist;
+						d3 = d2;
+					}
+				}				
+			}
+			dmsIDList.add(d3.DMSId);
+			dmsHelpers.add(d3);
+		}
+		
+		for(DMS d : dmsHelpers)
+		{
+			System.out.println("DMS " + d.DMSId);
+		}
+		
+		return dmsHelpers;
+	}
+	
+	public void createD2DGraph(DMS d)
+	{
+		ArrayList<DMS> dmsHelpers = sendDMSSOS(d);
+		for(DMS d1 : dmsHelpers)
+		{
+			transferInfoDMS(d, d1);
+			
+		}
+	}
+	
 	//Build the scenario placing BSs and UEs at random places DONE
 	//D2D algorithm
-	//Send DMS information to another DMS
+	//Send DMS information to another DMS DONE
+
 	//Network delay
 	//Time for d2d resolution
 	//Battery discharge code
