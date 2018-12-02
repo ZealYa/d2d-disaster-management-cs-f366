@@ -77,7 +77,7 @@ public class Driver
 				if(d2.DMSId!=d1.DMSId && !dmsIDList.contains(d2.DMSId))
 				{
 					double dist = Math.sqrt((d1.locationX-d2.locationX)*(d1.locationX-d2.locationX)
-									+ (d1.locationY-d2.locationY)*(d1.locationX-d2.locationY));
+									+ (d1.locationY-d2.locationY)*(d1.locationY-d2.locationY));
 					if(dist<=nearest)
 					{
 						nearest = dist;
@@ -103,14 +103,65 @@ public class Driver
 		for(DMS d1 : dmsHelpers)
 		{
 			transferInfoDMS(d, d1);
+			HashMap<UserEquipment, ArrayList<UserEquipment>> adjList = new HashMap<UserEquipment, ArrayList<UserEquipment>>();
 			
+			//Create a mesh d2d network
+			for(UserEquipment fromUE : d1.DMSDatabase)
+			{
+				adjList.put(fromUE, new ArrayList<UserEquipment>());
+				for(UserEquipment toUE : d1.DMSDatabase)
+				{
+					if(fromUE.equals(toUE)) continue;
+					
+					double dist = Math.sqrt((fromUE.locationX-toUE.locationX)*(fromUE.locationX-toUE.locationX)
+							+ (toUE.locationY-fromUE.locationY)*(toUE.locationY-fromUE.locationY));
+					if(dist<=ueRange)
+					{
+						ArrayList<UserEquipment> temp = adjList.get(fromUE);
+						temp.add(toUE);
+						adjList.put(fromUE, new ArrayList<UserEquipment>(temp));
+					}
+				}
+			}
+			
+			//Add helper base station(call it UE with ID 0) to the adjList
+			UserEquipment helper = new UserEquipment(0, 0, 0, 0, 0, 100, true);
+			helper.locationX = d1.locationX;
+			helper.locationY = d1.locationY;
+			adjList.put(helper, new ArrayList<UserEquipment>());
+			for(UserEquipment toUE : d1.DMSDatabase)
+			{
+				double dist = Math.sqrt((helper.locationX-toUE.locationX)*(helper.locationX-toUE.locationX)
+						+ (toUE.locationY-helper.locationY)*(toUE.locationY-helper.locationY));
+				if(dist<=bsRange)
+				{
+					ArrayList<UserEquipment> temp1 = adjList.get(helper);
+					temp1.add(toUE);
+					adjList.put(helper, temp1);
+				}
+			}
+			ArrayList<String> routeString = createRouteStrings(helper, adjList.size(), adjList, d.DMSDatabase);
 		}
 	}
+	
+	public ArrayList<String> createRouteStrings(UserEquipment helper, int numOfNodes, HashMap<UserEquipment, 
+												ArrayList<UserEquipment>> adjList, ArrayList<UserEquipment> sosUEList)
+	{
+		//Start from low power nodes, find route to helper base-station, the route should have 
+		//less number of middle nodes. Also, no low power device should be in the route.
+		//Mark all visited nodes.
+		return null;
+	}
+	
+	//Create a mesh d2d network
+	//Start from low power nodes, find route to helper base-station, the route should have 
+	//less number of middle nodes. Also, no low power device should be in the route.
+	//Mark all visited nodes.
 	
 	//Build the scenario placing BSs and UEs at random places DONE
 	//D2D algorithm
 	//Send DMS information to another DMS DONE
-
+	//x,y UE points, random graph
 	//Network delay
 	//Time for d2d resolution
 	//Battery discharge code
