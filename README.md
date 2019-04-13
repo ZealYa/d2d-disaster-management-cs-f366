@@ -1,7 +1,7 @@
 # D2D-disaster-management
 
 
-Cotains the code for the project CS F366.
+Contains the code for the project CS F366.
 
 ## Introduction 
 Wireless industry, driven by manifold increase in data and devices, is
